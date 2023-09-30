@@ -100,6 +100,10 @@ func getDefaultDir(varname string) string {
 }
 
 func uintptrToString(u uintptr) string {
+	defer func() {
+		recover()
+	}()
+
 	ptr := (*uint16)(unsafe.Pointer(u))
 	return windows.UTF16PtrToString(ptr)
 }
