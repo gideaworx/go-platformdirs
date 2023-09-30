@@ -80,8 +80,8 @@ func getDLLDir(varname string) (string, error) {
 	r1, r2, errptr := syscall.SyscallN(shGetFolderPathW, 0, uintptr(val), 0, 0, out)
 
 	fmt.Println("test")
-	fmt.Println(uintptrToString(r1))
-	fmt.Println(uintptrToString(r2))
+	fmt.Println(r1)
+	fmt.Println(r2)
 	fmt.Println(uintptrToString(out))
 	fmt.Println(errptr)
 	return "", nil
