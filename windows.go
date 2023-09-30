@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
+	"unsafe"
 
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
@@ -72,12 +73,12 @@ func getDLLDir(varname string) (string, error) {
 	var val = varMap[varname][FetchFromDLL].(int)
 	var out uintptr
 
-	r1, r2, errptr := syscall.SyscallN(getShortPathNameW, 0, val, 0, 0, out)
+	r1, r2, errptr := syscall.SyscallN(getShortPathNameW, 0, uintptr(val), 0, 0, out)
 
 	fmt.Println("test")
-	fmt.Println(windows.UTF16PtrToString(r1))
-	fmt.Println(windows.UTF16PtrToString(r2))
-	fmt.Println(windows.UTF16PtrToString(out))
+	fmt.Println(uintptrToString(r1))
+	fmt.Println(uintptrToString(r2))
+	fmt.Println(uintptrToString(out))
 	return "", nil
 }
 
@@ -89,6 +90,11 @@ func getEnvDir(varname string) (string, error) {
 
 }
 
-func getDefaultDir(varname sring) string {
+func getDefaultDir(varname string) string {
 	return filepath.Clean(os.Getenv("USERPROFILE"))
+}
+
+func uintptrToString(u uintptr) string {
+	ptr := (*uint16)(unsafe.Pointer(u))
+	return windows.UTF16PtrToString(ptr)
 }
