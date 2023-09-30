@@ -24,7 +24,7 @@ const (
 
 var (
 	shell32, _          = syscall.LoadLibrary("shell32.dll")
-	shGetFolderPathW, _ = syscall.GetModuleAddress(shell32, "SHGetFolderPathW")
+	shGetFolderPathW, _ = syscall.GetProcAddress(shell32, "SHGetFolderPathW")
 
 	varMap = map[string]map[fetchType]any{
 		"CSIDL_LOCAL_APPDATA": {
@@ -65,29 +65,34 @@ func getFetchType() fetchType {
 	return FetchFromEnv
 }
 
-func (w windowsPlatformDirs) getUserDataDir() (string, error) {
+func (w windowsPlatformDirs) UserDataDir() (string, error) {
 	return getDLLDir(userDataDir)
+}
+
+func (w windowsPlatformDirs) UserConfigDir() (string, error) {
+	return w.UserDataDir()
 }
 
 func getDLLDir(varname string) (string, error) {
 	var val = varMap[varname][FetchFromDLL].(int)
 	var out uintptr
 
-	r1, r2, errptr := syscall.SyscallN(getShortPathNameW, 0, uintptr(val), 0, 0, out)
+	r1, r2, errptr := syscall.SyscallN(shGetFolderPathW, 0, uintptr(val), 0, 0, out)
 
 	fmt.Println("test")
 	fmt.Println(uintptrToString(r1))
 	fmt.Println(uintptrToString(r2))
 	fmt.Println(uintptrToString(out))
+	fmt.Println(errptr)
 	return "", nil
 }
 
 func getRegistryDir(varname string) (string, error) {
-
+	return "", nil
 }
 
 func getEnvDir(varname string) (string, error) {
-
+	return "", nil
 }
 
 func getDefaultDir(varname string) string {
