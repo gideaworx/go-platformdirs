@@ -23,8 +23,8 @@ const (
 )
 
 var (
-	shell32, _          = syscall.LoadLibrary("shell32.dll")
-	shGetFolderPathW, _ = syscall.GetProcAddress(shell32, "SHGetFolderPathW")
+	shell32,           = syscall.NewLazyDLL("shell32.dll")
+	shGetFolderPathW   = shell32.NewProc("SHGetFolderPathW")
 
 	varMap = map[string]map[fetchType]any{
 		"CSIDL_LOCAL_APPDATA": {
@@ -77,14 +77,14 @@ func getDLLDir(varname string) (string, error) {
 	var val = varMap[varname][FetchFromDLL].(int)
 	var out uintptr
 
-	r1, r2, errptr := syscall.SyscallN(shGetFolderPathW, 0, uintptr(val), 0, 0, out)
+	r1, _, err := shGetFolderPathW.Call(0, uintptr(val), 0, 0, out)
 
-	fmt.Println("test")
-	fmt.Println(r1)
-	fmt.Println(r2)
-	fmt.Println(out)
-	fmt.Println(errptr)
-	return "", nil
+	noErr := syscall.Errno(0)
+	if err != noErr {
+		return "", err
+	}
+
+	return fmt.Sprint(out), nil
 }
 
 func getRegistryDir(varname string) (string, error) {
