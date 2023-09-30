@@ -101,7 +101,10 @@ func getDefaultDir(varname string) string {
 
 func uintptrToString(u uintptr) string {
 	defer func() {
-		recover()
+		if r := recover(); r != nil {
+			fmt.Print("panicked in uintptrToString")
+			return
+		}
 	}()
 
 	ptr := (*uint16)(unsafe.Pointer(u))
