@@ -82,7 +82,7 @@ func getDLLDir(varname string) (string, error) {
 	fmt.Println("test")
 	fmt.Println(r1)
 	fmt.Println(r2)
-	fmt.Println(uintptrToString(out))
+	fmt.Println(out)
 	fmt.Println(errptr)
 	return "", nil
 }
