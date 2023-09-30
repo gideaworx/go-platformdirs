@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"golang.org/x/sys/windows/registry"
 	"golang.org/x/sys/windows"
+	"golang.org/x/sys/windows/registry"
 )
 
 type fetchType uint8
@@ -27,10 +27,10 @@ var (
 
 	varMap = map[string]map[fetchType]any{
 		"CSIDL_LOCAL_APPDATA": {
-			FetchFromDLL: 28,
+			FetchFromDLL:      28,
 			FetchFromRegistry: "Local AppData",
-			FetchFromEnv: "LOCALAPPDATA"
-		}
+			FetchFromEnv:      "LOCALAPPDATA",
+		},
 	}
 )
 
