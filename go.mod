@@ -1,4 +1,4 @@
-module github.com/gideaworx/platformdirs
+module go.gideaworx.io/platformdirs
 
 go 1.21.1
 

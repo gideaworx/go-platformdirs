@@ -1,16 +1,14 @@
 //go:build windows
 // +build windows
 
-package platformdirs
+package platformdirs // import go.gideaworx.io/platformdirs
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 	"syscall"
-	"unsafe"
 
-	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -23,8 +21,8 @@ const (
 )
 
 var (
-	shell32,           = syscall.NewLazyDLL("shell32.dll")
-	shGetFolderPathW   = shell32.NewProc("SHGetFolderPathW")
+	shell32          = syscall.NewLazyDLL("shell32.dll")
+	shGetFolderPathW = shell32.NewProc("SHGetFolderPathW")
 
 	varMap = map[string]map[fetchType]any{
 		"CSIDL_LOCAL_APPDATA": {
@@ -54,7 +52,7 @@ func New(appAuthor, appName, _ string) PlatformDirs {
 }
 
 func getFetchType() fetchType {
-	if shGetFolderPathW != 0 {
+	if shGetFolderPathW != nil {
 		return FetchFromDLL
 	}
 
@@ -77,7 +75,7 @@ func getDLLDir(varname string) (string, error) {
 	var val = varMap[varname][FetchFromDLL].(int)
 	var out uintptr
 
-	r1, _, err := shGetFolderPathW.Call(0, uintptr(val), 0, 0, out)
+	_, _, err := shGetFolderPathW.Call(0, uintptr(val), 0, 0, out)
 
 	noErr := syscall.Errno(0)
 	if err != noErr {
@@ -87,26 +85,14 @@ func getDLLDir(varname string) (string, error) {
 	return fmt.Sprint(out), nil
 }
 
-func getRegistryDir(varname string) (string, error) {
+func getRegistryDir(_ string) (string, error) {
 	return "", nil
 }
 
-func getEnvDir(varname string) (string, error) {
+func getEnvDir(_ string) (string, error) {
 	return "", nil
 }
 
-func getDefaultDir(varname string) string {
+func getDefaultDir(_ string) string {
 	return filepath.Clean(os.Getenv("USERPROFILE"))
-}
-
-func uintptrToString(u uintptr) string {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Print("panicked in uintptrToString")
-			return
-		}
-	}()
-
-	ptr := (*uint16)(unsafe.Pointer(u))
-	return windows.UTF16PtrToString(ptr)
 }

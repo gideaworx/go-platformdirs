@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gideaworx/platformdirs"
+	"go.gideaworx.io/platformdirs"
 )
 
 func TestWindows(t *testing.T) {

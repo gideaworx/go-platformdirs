@@ -1,7 +1,7 @@
 //go:build darwin
 // +build darwin
 
-package platformdirs
+package platformdirs // import go.gideaworx.io/platformdirs
 
 import (
 	"os"

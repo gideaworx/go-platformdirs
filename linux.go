@@ -1,7 +1,7 @@
 //go:build linux
 // +build linux
 
-package platformdirs
+package platformdirs // import go.gideaworx.io/platformdirs
 
 import (
 	"os"
